@@ -1,36 +1,32 @@
 <template>
   <section>
     <img :src="picture" :width="size" :height="size" ref="imageEl"><br>
-
-    <form @submit.prevent="submitForm">
-      <label>input your nickname : </label>
-      <input type="text" ref="nickNameEl">
-      <button type="submit">submit</button>
-    </form>
-    <!-- input your nickname : <input type="text" v-on:input="setNickname"> -->
-    <h1>{{ getFullname() }}</h1>
-    <h1>Nickname: <span v-html="nickname"></span></h1>
-    <p>ig : <a :href="ig" target="_blank">Instagram</a></p>
-    <p>hobbies</p>
-    <ul>
-      <li>{{ hobbies[0] }}</li>
-      <li>{{ hobbies[1] }}</li>
-      <li>{{ hobbies[2] }}</li>
-    </ul>
-    <p>General Information:</p>
-    <ul>
-      <li>Gender: {{ general.gender }}</li>
-      <li>Weight: {{ general.weight }} kg</li>
-      <li>Height: {{ general.height }} cm</li>
-      <li>Status: {{ general.status }}</li>
-    </ul>
-    <button @click="showData">Click here</button>
-    <button @click.ctrl="increment(10)">+</button>
-    <button @click.middle="decrement(5)">-</button>
+    <h1>{{ getFullname }}</h1>
+    <h1>Salary: {{ salary }} Bath</h1>
+    <h1>Annual salary: {{ getIncome }} Bath</h1>
+    <h1>Position: {{ getPosition }}</h1>
+    <button @click="salary += 5000">+</button>
+    <button @click="salary -= 5000">-</button>
+    <button @click="toggleInfo">{{ isVisible ? 'less' : 'more' }} info</button>
+    <article v-show="isVisible">
+      <p>ig : <a :href="ig" target="_blank">Instagram</a></p>
+      <p v-if="hobbies.length === 0">no hobby</p>
+      <div v-else>
+        <p>Hobbies:</p>
+        <ul>
+          <li v-for="(item, index) in hobbies" :key="index">{{ item }}</li>
+        </ul>
+      </div>
+      <p>General Information:</p>
+      <ul>
+        <li v-for="(item, key) in general" :key="key">{{ key }}: {{ item }}</li>
+      </ul>
+    </article>
   </section>
 </template>
 
 <script>
+
 
 export default {
   name: 'App',
@@ -43,36 +39,47 @@ export default {
       picture: "https://www.w3schools.com/w3images/avatar2.png",
       size: 50,
       ig: "https://www.instagram.com/boom_eakawat/",
-      hobbies: ["Football", "Basketball", "Swimming"],
+      hobbies: ["Football", "Basketball"],
       general: {
         gender: "male",
         weight: 70,
         height: 180,
         status: "false"
-      }
+      },
+      isVisible: false,
+      salary: 200000,
     }
   },
   methods: {
+    toggleInfo() {
+      this.isVisible = !this.isVisible;
+    },
+    getRandomByMethods() {
+      return Math.random();
+    }
+  },
+  computed: {
     getFullname() {
       return `${this.firstname} ${this.lastname}, ${this.age} years old.`
     },
-    showData() {
-      alert(`Name: ${this.firstname}`)
+    getRandomByComputed() {
+      return Math.random();
     },
-    increment(value) {
-      this.age+=value
+    getIncome() {
+      return this.salary * 12;
     },
-    decrement(value) {
-      this.age-=value
-    },
-    // setNickname(event) {
-    //   this.nickname = event.target.value
-    //   console.log(event.target.value);
-    // },
-    submitForm() {
-      alert(`Your nickname is ${this.$refs.nickNameEl.value}`)
-      console.log(this.$refs.nickNameEl.value);
-      this.nickname = this.$refs.nickNameEl.value
+    getPosition() {
+      return this.salary >= 35000 ? "Senior" : "Junior";
+    }
+  },
+  watch: {
+    salary(value) {
+      if (value > 50000) {
+        this.salary = 50000;
+        setTimeout(() => {
+          alert("Salary cannot exceed 50000 Bath.");
+        }, 2000);
+      }
     }
   }
 }
